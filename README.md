@@ -5,6 +5,8 @@ App Router projects. It teaches the full mental model — tag registry,
 revalidation utilities, Suspense boundaries, mutation wiring — not
 just where to drop a `"use cache"` directive.
 
+[![skills.sh](https://skills.sh/b/mohamed-hossam1/nextjs-cache-architecture)](https://skills.sh/mohamed-hossam1/nextjs-cache-architecture)
+
 ## What this skill teaches
 
 - When and where to place `"use cache"`, and where it must never go
@@ -63,7 +65,7 @@ audit script to check the static parts of the post-implementation
 checklist:
 
 ```bash
-node skills/nextjs-cache-architecture/scripts/audit.mjs <your-project-root>
+npx skills add https://github.com/mohamed-hossam1/nextjs-cache-architecture --skill nextjs-cache-architecture
 ```
 
 It verifies that `cacheComponents: true` is set, that
@@ -90,6 +92,10 @@ See [AGENTS.md](./AGENTS.md) for style, naming, and structure rules.
 The skill prefers fixing the architecture over working around it —
 every new pattern must justify its place by a real mutation or
 rendering case.
+
+## License
+
+MIT
 
 ## Author
 
