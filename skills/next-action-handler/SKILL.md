@@ -12,13 +12,24 @@ metadata:
 
 `next-action-handler` installs a server action layer built on `next-safe-action`, `better-auth`, `pino`, and `zod`. It standardizes errors, logging, and auth context.
 
-## Install
+## Installation
 
-From the project root:
+If you want a local dev dependency, install it first. Otherwise skip to Usage.
+
+```bash
+npm install -D next-action-handler
+```
+
+## Usage
+
+From the project root, run the installer:
 
 ```bash
 npx next-action-handler@latest add
 ```
+
+`@latest` forces `npx` to use the newest published version. The installer applies
+the full handler setup in one pass, with no component selection.
 
 Install path detection order:
 
