@@ -1,81 +1,56 @@
-# nextjs-cache-architecture
+# nextjs-skills
 
-An agent skill for designing and implementing caching in Next.js 16+
-App Router projects. It teaches the full mental model — tag registry,
-revalidation utilities, Suspense boundaries, mutation wiring — not
-just where to drop a `"use cache"` directive.
+A collection of agent skills for Next.js workflows. The repository
+currently includes two skills: `nextjs-cache-architecture` and
+`next-action-handler`.
 
 [![skills.sh](https://skills.sh/b/mohamed-hossam1/nextjs-cache-architecture)](https://skills.sh/mohamed-hossam1/nextjs-cache-architecture)
+<!-- [![skills.sh](https://skills.sh/b/mohamed-hossam1/next-action-handler)](https://skills.sh/mohamed-hossam1/next-action-handler) -->
 
-## What this skill teaches
+## Skills
 
-- When and where to place `"use cache"`, and where it must never go
-- Building a centralized tag registry in `lib/cache/tags.ts`
-- Centralizing every `updateTag()` call in `lib/cache/revalidate.ts`
-- Structuring pages as a static shell plus Suspense-isolated cached
-  and dynamic sections
-- Handling personalized content (cookies, headers, auth) without
-  breaking cache boundaries
-- Wiring mutations to invalidation utilities so cache and data stay
-  in sync
-- `SuspenseOnSearchParams` for pages with search or filter parameters
-- Migrating from `unstable_cache` and the deprecated single-argument
-  `revalidateTag()` form
-- Debugging stale data or unexpectedly fresh data
+- `nextjs-cache-architecture` helps design and implement caching in
+  Next.js 16+ App Router projects, covering tag registries, cache
+  boundaries, revalidation utilities, and debugging stale data.
+- `next-action-handler` standardizes server actions with input/output
+  validation, error normalization, auth context, and pino logging on
+  top of `next-safe-action` and `zod`.
 
 ## Repository layout
 
 ```
-skills/nextjs-cache-architecture/
-├── SKILL.md                                # Always-loaded core: architecture + 7 steps + common mistakes
-├── overlay.yaml                            # Routing manifest (prompt signals, validators)
-├── references/                             # Loaded on demand
-│   ├── core-concepts.md                    # Auto cache keys, placement rules, cacheLife, limitations
-│   ├── personalized-content.md             # cookies/headers patterns and "use cache: private"
-│   ├── debugging-and-checklist.md          # Debug order and post-implementation checklist
-│   └── migration-from-unstable-cache.md    # Mechanical rewrites and gotchas
-├── assets/                                 # Drop-in templates the agent copies into your repo
-│   ├── tags.ts                             # -> lib/cache/tags.ts
-│   ├── revalidate.ts                       # -> lib/cache/revalidate.ts
-│   └── SuspenseOnSearchParams.tsx          # -> components/SuspenseOnSearchParams.tsx
-├── scripts/
-│   └── audit.mjs                           # Static checklist verifier — run against your project
-└── evals/
-    └── evals.json                          # Starter test cases for the skill
+skills/
+├── nextjs-cache-architecture/
+│   ├── SKILL.md                                # Always-loaded core: architecture + steps + common mistakes
+│   ├── overlay.yaml                            # Routing manifest (prompt signals, validators)
+│   ├── references/                             # Loaded on demand
+│   ├── assets/                                 # Drop-in templates the agent copies into your repo
+│   ├── scripts/                                # Verifiers and generators
+│   └── evals/                                  # Test cases for the skill
+├── next-action-handler/
+│   ├── SKILL.md
+│   └── references/                             # Loaded on demand
+src/                                            # Shared runtime code used by skills
 ```
-
-The agent loads `SKILL.md` on every invocation, then pulls in
-references only when the task calls for them, and copies templates
-from `assets/` into your project — renaming placeholders such as
-`[Entity]` and `[collection]` to match your real names.
 
 ## Usage
 
-Describe your domain and the skill triggers on phrases like "set up
-caching", "add `use cache`", "invalidate when a post updates", "why is
-my data stale", or even an open-ended "I have a `posts` table — how
-should I cache it?". The agent applies the architecture to your actual
-codebase, replacing every placeholder with your real entity and
-collection names.
+Install a skill from this repository with `npx skills add`:
+
+```bash
+npx skills add https://github.com/mohamed-hossam1/nextjs-skills --skill nextjs-cache-architecture
+npx skills add https://github.com/mohamed-hossam1/nextjs-skills --skill next-action-handler
+```
 
 ## Verifying an implementation
 
-After the skill applies the architecture to your project, run the
-audit script to check the static parts of the post-implementation
-checklist:
-
-```bash
-npx skills add https://github.com/mohamed-hossam1/nextjs-cache-architecture --skill nextjs-cache-architecture
-```
-
-It verifies that `cacheComponents: true` is set, that
-`lib/cache/tags.ts` and `lib/cache/revalidate.ts` exist, that no raw
-`updateTag()` calls leak outside the revalidation utility, that no
-deprecated single-argument `revalidateTag()` calls remain, and that
-`"use cache"` files do not also call `cookies()`, `headers()`, or
-`auth()`.
+`nextjs-cache-architecture` includes a static audit script at
+`skills/nextjs-cache-architecture/scripts/audit.mjs`. Run it after
+applying the skill to confirm the checklist items are in place.
 
 ## Requirements
+
+### `nextjs-cache-architecture`
 
 | Requirement                                 | Status |
 | ------------------------------------------- | ------ |
@@ -86,10 +61,15 @@ deprecated single-argument `revalidateTag()` calls remain, and that
 | Edge runtime                                | No     |
 | Static export (`output: "export"`)          | No     |
 
+### `next-action-handler`
+
+- Next.js App Router with server actions
+- `next-safe-action`, `zod`, `better-auth`, and `pino` (installed by the skill)
+
 ## Contributing
 
 See [AGENTS.md](./AGENTS.md) for style, naming, and structure rules.
-The skill prefers fixing the architecture over working around it —
+Each skill prefers fixing the architecture over working around it —
 every new pattern must justify its place by a real mutation or
 rendering case.
 

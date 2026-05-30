@@ -7,13 +7,19 @@ others. `CLAUDE.md` simply points here.
 ## Repository layout
 
 ```
-skills/nextjs-cache-architecture/
-├── SKILL.md            # Always-loaded core. Keep under ~500 lines.
-├── overlay.yaml        # Optional routing manifest. Update when triggering signals change.
-├── references/         # Deep-dive markdown the agent loads on demand.
-├── assets/             # Drop-in source files copied verbatim into user repos.
-├── scripts/            # Executable verifiers / generators with no external deps.
-└── evals/              # Test cases for the skill.
+skills/
+├── nextjs-cache-architecture/
+│   ├── SKILL.md            # Always-loaded core.
+│   ├── overlay.yaml        # Optional routing manifest. Update when triggering signals change.
+│   ├── references/         # Deep-dive markdown the agent loads on demand.
+│   ├── assets/             # Drop-in source files copied verbatim into user repos.
+│   ├── scripts/            # Executable verifiers / generators with no external deps.
+│   └── evals/              # Test cases for the skill.
+├── next-action-handler/
+│   ├── SKILL.md
+│   └── references/         # Optional, depends on the skill
+└── [otherSkill]/            # Follows the same structure where applicable
+src/                         # Shared runtime code used by skills
 ```
 
 Top-level docs (`README.md`, `AGENTS.md`, `CLAUDE.md`) describe the
@@ -30,7 +36,7 @@ repo and its contribution rules — not the skill's content.
   `[camelCase]` for functions, variables, and tag strings.
 - Every code snippet should compile if pasted into a real project —
   include the imports it depends on.
-- Bad examples come *after* the good pattern they contrast with, never
+- Bad examples come _after_ the good pattern they contrast with, never
   alone. The reader should always see the right answer first.
 
 ## SKILL.md authoring rules
@@ -43,13 +49,13 @@ repo and its contribution rules — not the skill's content.
   - Anything else is silently ignored by harnesses — typos become
     invisible bugs.
   - `description` should explicitly list trigger phrases. Agents tend
-    to *under*-trigger skills, so be slightly assertive about *when*
+    to _under_-trigger skills, so be slightly assertive about _when_
     to use it.
   - Bump `metadata.version` when the skill structure or rules change.
 - Stay under ~500 lines. If you approach the limit, push detail down a
   layer — into `references/`, `assets/`, or `scripts/` — with clear
   pointers to the new location.
-- Explain the *why* before any code. Lean on theory of mind instead of
+- Explain the _why_ before any code. Lean on theory of mind instead of
   blanket `MUST` / `NEVER`. Today's models are smart enough to act on
   reasoning, and reasoning generalizes; rigid rules don't.
 
@@ -84,13 +90,14 @@ Reference files must:
 ## When to add an `assets/` file
 
 Add an asset when the same source file would be re-derived in every
-project that uses the skill. The current set:
+project that uses the skill. The current set in
+`nextjs-cache-architecture`:
 
-| Asset                          | Copies to                                |
-| ------------------------------ | ---------------------------------------- |
-| `tags.ts`                      | `lib/cache/tags.ts`                      |
-| `revalidate.ts`                | `lib/cache/revalidate.ts`                |
-| `SuspenseOnSearchParams.tsx`   | `components/SuspenseOnSearchParams.tsx`  |
+| Asset                        | Copies to                               |
+| ---------------------------- | --------------------------------------- |
+| `tags.ts`                    | `lib/cache/tags.ts`                     |
+| `revalidate.ts`              | `lib/cache/revalidate.ts`               |
+| `SuspenseOnSearchParams.tsx` | `components/SuspenseOnSearchParams.tsx` |
 
 Assets must:
 
@@ -117,9 +124,9 @@ repeated manually across every install of the skill. Scripts must:
 
 The current set:
 
-| Script        | Purpose                                                  |
-| ------------- | -------------------------------------------------------- |
-| `audit.mjs`   | Static verification of the post-implementation checklist |
+| Script      | Purpose                                                  |
+| ----------- | -------------------------------------------------------- |
+| `audit.mjs` | Static verification of the post-implementation checklist |
 
 ## When to add or change `evals/evals.json`
 
@@ -127,7 +134,7 @@ Eval prompts must read like things a real user would actually type —
 domain context, file paths, code snippets, casual phrasing — not
 abstract restatements of the skill's features. Each entry needs `id`,
 `prompt`, and `expected_output`. Keep `expected_output` describable
-in plain text — what *should* the run produce — without dictating the
+in plain text — what _should_ the run produce — without dictating the
 agent's exact phrasing.
 
 Bump `metadata.version` in `SKILL.md` when adding evals so that
@@ -165,7 +172,7 @@ Every skill's `SKILL.md` frontmatter must:
   `python3 -c 'import yaml; yaml.safe_load(open(p).read().split("---")[1])'`.
 - Have a `description` that explicitly lists trigger phrases — agents
   tend to under-trigger, so the description should be slightly
-  assertive about *when* to use the skill.
+  assertive about _when_ to use the skill.
 - Bump `metadata.version` when the skill structure or rules change.
 
 ## What not to add
@@ -188,16 +195,18 @@ Run these against any change you've made.
 - Frontmatter parses:
   ```bash
   python3 -c 'import yaml; yaml.safe_load(open("skills/nextjs-cache-architecture/SKILL.md").read().split("---")[1])'
+  python3 -c 'import yaml; yaml.safe_load(open("skills/next-action-handler/SKILL.md").read().split("---")[1])'
   ```
-- Every `references/` and `assets/` path mentioned in `SKILL.md`
+- Every `references/` and `assets/` path mentioned in each `SKILL.md`
   resolves to a real file.
 - No leftover correctness banners:
   ```bash
-  grep -E "// (WRONG|CORRECT)" skills/nextjs-cache-architecture/SKILL.md
+  grep -E "// (WRONG|CORRECT)" skills/*/SKILL.md
   ```
 - The skill has a title:
   ```bash
   grep -c "^# " skills/nextjs-cache-architecture/SKILL.md
+  grep -c "^# " skills/next-action-handler/SKILL.md
   ```
 - Evals JSON parses:
   ```bash
